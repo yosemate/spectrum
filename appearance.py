@@ -149,13 +149,11 @@ class ThemeManager(QObject):
         except Exception:pass   # sem as fontes embutidas o programa usa as alternativas da pilha
         app.installEventFilter(self)
         from button_fx import ButtonFx
-        from touch_keyboard import TouchKeyboardController
         self.button_fx=ButtonFx(app)
         from cursors import CursorController
         self.cursor_fx=CursorController(app)
         import motion
         self.motion_fx=motion.MotionController(app)
-        self.keyboard=TouchKeyboardController(app,self)
         self.set_theme(self.theme,False)
     def refresh_preferences_path(self):
         path=preferences_path()

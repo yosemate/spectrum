@@ -205,16 +205,9 @@ Abaixo do gráfico, o `AnalysisIndicator` mostra o que o equipamento faz, em lin
 - **Espectro animado** durante a leitura e **etapas 1 a 5**, cada etapa concluída na cor da sua banda (fechar gaveta, avançar sensor, ler, recuar sensor, abrir gaveta).
 - **Mensagem final** "Análise concluída. Boa amostra!" por 7 s.
 
-## Teclado na tela
+## Teclado
 
-Para touchscreen, ao tocar em um campo de texto abre um teclado próprio (`touch_keyboard.py`), com o mesmo estilo plano dos botões:
-
-- **Quando abre.** Com **duplo clique** em um campo de texto. Um clique simples só posiciona o cursor. Um clique fora do teclado e fora do campo o recolhe. O teclado é uma janela própria, sem modos nem detecção de aparelho, e pode ser arrastado pela faixa do título; ao abrir de novo, volta para perto do campo.
-- **Tamanho e lugar.** Menor que antes (numérico 300 × 248 px; completo até 660 × 292 px) e no **canto superior esquerdo** da janela. Só sai de lá se cobrir o campo em edição; nesse caso vai para baixo ou ao lado do campo.
-- **Numérico** (dígitos e ponto) no campo de IP; **só dígitos** na porta. **Completo** (letras, símbolos e acentos do português) nos demais campos, como login e nomes de amostra.
-- Não rouba o foco: o cursor continua no campo e as teclas chegam como as do teclado físico. Funciona dentro de diálogos modais.
-
-Para um campo novo escolher o teclado: `campo.setProperty("touchKeyboard", "numeric")` (ou `"digits"` / `"off"`).
+O programa não tem teclado virtual próprio. Em touchscreen ou celular, o teclado que abre nos campos de texto é o do próprio sistema (ele ocupa a tela enquanto o campo está em foco).
 
 ## Estado da aplicação
 

@@ -38,7 +38,6 @@ python3 -I tests/test_typography.py
 python3 -I tests/test_glass.py
 python3 -I tests/test_analysis_messages.py
 python3 -I tests/test_animation_math.py
-python3 -I tests/test_keyboard_layouts.py
 python3 -I tests/test_responsive_math.py
 QT_QPA_PLATFORM=offscreen python3 -m unittest tests.test_gui_smoke -v
 ```

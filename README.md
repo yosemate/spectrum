@@ -39,7 +39,6 @@ O SPECTRUM-LAB PRO controla uma bancada de medição NIR de baixo custo: aquisi�
 | `scada_ui.py` · `appearance.py` · `popup_design.py` | Interface, temas e diálogos de alerta |
 | `typography.py` · `button_fx.py` · `animation_math.py` | Escala tipográfica, efeitos de botão e funções de animação (molas, entradas) |
 | `analysis_indicator.py` · `analysis_messages.py` | Indicador de análise (rosto, etapas, frases) |
-| `touch_keyboard.py` · `keyboard_layouts.py` | Teclado na tela |
 | `connection_worker.py` · `serial_worker.py` | Comunicação com o ESP32 (USB, Bluetooth SPP e Wi-Fi TCP) |
 | `chemometrics.py` | Calibração, reflectância relativa, SNV e estimativa de Kappa |
 | `equipment_interlocks.py` · `manual_control_dialog.py` | Intertravamentos e painel de atuadores |
@@ -101,7 +100,6 @@ python3 -I tests/test_typography.py
 python3 -I tests/test_glass.py
 python3 -I tests/test_analysis_messages.py
 python3 -I tests/test_animation_math.py
-python3 -I tests/test_keyboard_layouts.py
 QT_QPA_PLATFORM=offscreen python3 -m unittest tests.test_gui_smoke -v   # precisa de PyQt5
 ```
 

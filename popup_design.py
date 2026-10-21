@@ -10,8 +10,6 @@ from animation_math import mix_hex
 def popup_owner(widget):
     current = widget
     while current is not None:
-        if current.property("touchKeyboardWindow"):
-            return None   # o teclado na tela tem estilo próprio, mesmo quando é filho de um diálogo
         if isinstance(current, QDialog) or current.objectName() == "scaledDialogContent":
             return current
         current = current.parentWidget()

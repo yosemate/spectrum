@@ -46,9 +46,6 @@ class GuiSmokeTests(unittest.TestCase):
     def pump(self):
         self.app.processEvents()
 
-    def tearDown(self):
-        self.manager.keyboard.hide_keyboard()
-
     def test_embedded_fonts_are_registered(self):
         families = set(QFontDatabase().families())
         for family in ("Inter", "Dropline", "Arena", "IBM Plex Mono"):
@@ -183,104 +180,11 @@ class GuiSmokeTests(unittest.TestCase):
         self.pump()
         self.assertFalse(button._fx_overlay.busy_timer.isActive())
 
-    def test_numeric_keyboard_types_an_ip_address(self):
-        host = QWidget()
-        layout = QVBoxLayout(host)
-        field = QLineEdit()
-        field.setProperty("touchKeyboard", "numeric")
-        layout.addWidget(field)
-        host.resize(400, 120)
-        host.show()
-        field.setFocus()
-        self.pump()
-        keyboard = self.manager.keyboard._window()
-        keyboard.open_for(field)
-        self.pump()
-        self.assertTrue(keyboard.isVisible())
-
-        def key(text):
-            return next(b for b in keyboard.findChildren(QPushButton) if b.text() == text)
-
-        for char in "192.168.4.1":
-            key(char).click()
-        self.assertEqual(field.text(), "192.168.4.1")
-        key("Apagar").click()
-        self.assertEqual(field.text(), "192.168.4.")
-        key("Limpar").click()
-        self.assertEqual(field.text(), "")
-        keyboard.hide()
-        host.close()
-
-    def test_digits_keyboard_has_no_dot(self):
-        host = QWidget()
-        field = QLineEdit(host)
-        field.setProperty("touchKeyboard", "digits")
-        host.resize(300, 100)
-        host.show()
-        self.pump()
-        keyboard = self.manager.keyboard._window()
-        keyboard.open_for(field)
-        self.pump()
-        self.assertNotIn(".", [b.text() for b in keyboard.findChildren(QPushButton)])
-        keyboard.hide()
-        host.close()
-
-    def test_double_click_opens_and_outside_click_closes(self):
-        host = QWidget()
-        field = QLineEdit(host)
-        other = QPushButton("fora", host)
-        other.move(200, 60)
-        host.resize(400, 200)
-        host.show()
-        self.pump()
-        keyboard = self.manager.keyboard
-        QTest.mouseClick(field, Qt.LeftButton)          # clique simples não abre o teclado
-        self.pump()
-        self.assertFalse(keyboard._visible())
-        QTest.mouseDClick(field, Qt.LeftButton)         # duplo clique abre
-        QTest.qWait(50)
-        self.assertTrue(keyboard._visible())
-        QTest.mouseClick(field, Qt.LeftButton)          # tocar no próprio campo mantém aberto
-        self.pump()
-        self.assertTrue(keyboard._visible())
-        QTest.mouseClick(other, Qt.LeftButton)          # clique fora recolhe
-        self.pump()
-        self.assertFalse(keyboard._visible())
-        host.close()
-
-    def test_keyboard_is_compact_and_in_the_top_left(self):
-        host = QWidget()
-        field = QLineEdit(host)
-        field.move(700, 400)
-        host.resize(1000, 600)
-        host.show()
-        self.pump()
-        keyboard = self.manager.keyboard._window()
-        keyboard.open_for(field)
-        self.pump()
-        self.assertLessEqual(keyboard.width(), 700)
-        self.assertLessEqual(keyboard.height(), 300)
-        area = QApplication.desktop().availableGeometry()
-        self.assertLessEqual(keyboard.x() - area.x(), 40)
-        self.assertLessEqual(keyboard.y() - area.y(), 40)
-        keyboard.hide()
-        host.close()
-
-
-    # ---- Configurações: aparência e acessibilidade em seções separadas
-    def _dialog(self):
-        from appearance import AppearanceDialog
-        dialog = AppearanceDialog(self.manager)
-        dialog.show()
-        self.pump()
-        return dialog
-
     def test_settings_has_only_the_appearance_section(self):
         from PyQt5.QtWidgets import QFrame
         dialog = self._dialog()
         sections = [f for f in dialog.findChildren(QFrame) if f.objectName() == "settingsSection"]
         self.assertEqual(len(sections), 1)
-        self.assertFalse(hasattr(dialog, "keyboard_selector"))
         self.assertFalse(hasattr(dialog, "motion_selector"))
         dialog.close()
 
