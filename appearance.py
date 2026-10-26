@@ -123,7 +123,7 @@ def read_preferences(path):
     theme=data.get("theme")
     theme=LEGACY_THEMES.get(theme,theme)
     if theme not in PALETTES:theme=DEFAULT_THEME
-    return {"theme":theme}
+    return {"theme":theme, "reduce_motion":data.get("reduce_motion") is True}
 def read_preference(path):return read_preferences(path)["theme"]
 def save_preferences(path,prefs):
     temporary=None
@@ -153,6 +153,7 @@ class ThemeManager(QObject):
         from cursors import CursorController
         self.cursor_fx=CursorController(app)
         import motion
+        motion.set_reduced(self.prefs["reduce_motion"] or os.environ.get("SPECTRUM_REDUCE_MOTION") in ("1", "true", "yes"))
         self.motion_fx=motion.MotionController(app)
         self.set_theme(self.theme,False)
     def refresh_preferences_path(self):
@@ -280,6 +281,13 @@ class AppearanceDialog(QDialog):
         layout.addWidget(self._section("Aparência","Tema da interface. A mudança é aplicada na hora e a escolha fica salva.",theme_box))
 
 
+        from PyQt5.QtWidgets import QCheckBox
+        import motion
+        self.reduce_motion=QCheckBox("Reduzir animações")
+        self.reduce_motion.setChecked(motion.reduced())
+        self.reduce_motion.toggled.connect(self.change_motion)
+        layout.addWidget(self.reduce_motion)
+
         self.feedback=QLabel("As alterações são aplicadas imediatamente.")
         self.feedback.setWordWrap(True);self.feedback.setStyleSheet("color: #9CA3AF; font-size: 12px;")
         layout.addWidget(self.feedback)
@@ -297,6 +305,13 @@ class AppearanceDialog(QDialog):
         note=QLabel(description);note.setWordWrap(True);note.setStyleSheet("color: #9CA3AF; font-size: 14px;")
         box.addWidget(head);box.addWidget(note);box.addWidget(content)
         return frame
+    def change_motion(self, reduced):
+        import motion
+        motion.set_reduced(reduced)
+        self.manager.prefs["reduce_motion"] = bool(reduced)
+        ok, error = save_preferences(self.manager.path, self.manager.prefs)
+        self.feedback.setText("Preferência de animação salva." if ok else "Aplicada nesta sessão; não foi possível salvar: " + error)
+
     def change_theme(self,key=None):
         key=key or next((k for k,b in self.theme_buttons.items() if b.isChecked()),self.manager.theme)
         ok=self.manager.set_theme(key)

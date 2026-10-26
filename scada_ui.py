@@ -1,7 +1,7 @@
 """Composição SCADA aprovada: controles à esquerda, bandas à direita, diagnóstico abaixo."""
 from PyQt5.QtCore import Qt,QTimer,QSize,QPointF
 from PyQt5.QtGui import QColor,QPainter,QRadialGradient
-from PyQt5.QtWidgets import (QWidget,QFrame,QLabel,QPushButton,QVBoxLayout,QHBoxLayout,QGridLayout,
+from PyQt5.QtWidgets import (QLineEdit,QWidget,QFrame,QLabel,QPushButton,QVBoxLayout,QHBoxLayout,QGridLayout,
                              QSplitter,QDialog,QSizePolicy,QScrollArea,QScroller)
 import glass
 import responsive_math
@@ -230,9 +230,18 @@ def build_dashboard(w):
     w.btn_login=QPushButton('Login');w.btn_login.clicked.connect(lambda:open_login(w))
     tone(w.btn_connect,'sky');tone(manual,'indigo');tone(w.btn_login,'slate')
     w._topbar_main=[brand,w.combo_conn_mode,w.widget_serial,w.widget_wifi,w.btn_connect,w.badge_com]
-    w._topbar_actions=[manual,w.btn_top_emergency,w.btn_login,w.btn_settings]
+    w.btn_rearm=QPushButton('Rearmar');w.btn_rearm.clicked.connect(w.request_rearm)
+    w._topbar_actions=[manual,w.btn_top_emergency,w.btn_rearm,w.btn_login,w.btn_settings]
     w._topbar_two_rows=None;arrange_topbar(w,False)
     layout.addWidget(top)
+
+    identity_row=QHBoxLayout()
+    identity_row.addWidget(QLabel('Código da amostra:'))
+    w.input_sample_id=QLineEdit();w.input_sample_id.setPlaceholderText('Etiqueta externa (vazio: código interno automático)')
+    identity_row.addWidget(w.input_sample_id)
+    w.btn_retry_save=QPushButton('Tentar salvar novamente');w.btn_retry_save.clicked.connect(w.retry_save_result)
+    identity_row.addWidget(w.btn_retry_save)
+    layout.addLayout(identity_row)
 
     # ---- indicadores (ícone colorido, filete de cor e altura igual)
     w.kpi_bar=seeds[1]
@@ -319,6 +328,8 @@ def build_dashboard(w):
     def refresh():
         w.card_esp32.refresh(w)
         w.card_telemetria.refresh_freshness(busy=w.equipment.busy())
+        w.btn_retry_save.setVisible(getattr(w, '_pending_reading_record', None) is not None)
+        w.input_sample_id.setEnabled(w.fsm_state=='IDLE')
         w._update_scan_hint()
         w._update_sim_indicator()
         w.btn_login.setText('Sair · '+w.authenticated_user.get('username','Operador') if w.authenticated_user else 'Login')

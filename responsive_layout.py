@@ -12,6 +12,7 @@ class ScaledCanvasView(QGraphicsView):
         self.adaptive=adaptive          # True: o canvas acompanha a janela (ver responsive_math.py)
         self.layout_listener=None       # função(largura_lógica, altura_lógica) chamada quando o canvas muda
         self._last_logical=None
+        self._explicit_minimum=content.minimumSize()
         self.content=content
         content.ensurePolished()
         if content.layout(): content.layout().activate()
@@ -58,7 +59,7 @@ class ScaledCanvasView(QGraphicsView):
         layout=self.content.layout()
         if layout:
             layout.activate()
-            minimum=layout.minimumSize()
+            minimum=layout.minimumSize().expandedTo(self._explicit_minimum)
         else:
             minimum=self.content.minimumSizeHint()
         scale,lw,lh=responsive_math.fit(vw,vh,minimum.width(),minimum.height())
@@ -68,7 +69,7 @@ class ScaledCanvasView(QGraphicsView):
             self.layout_listener(lw,lh)
             if layout:
                 layout.activate()
-                minimum=layout.minimumSize()
+                minimum=layout.minimumSize().expandedTo(self._explicit_minimum)
                 scale,lw,lh=responsive_math.fit(vw,vh,minimum.width(),minimum.height())
         self.scale_factor=scale
         self._last_logical=(lw,lh)

@@ -8,7 +8,7 @@ funciona igual, só sem a animação.
   - crossfade de tema: ao trocar claro/escuro, a imagem da janela anterior se dissolve sobre a nova;
   - fade de diálogos: janelas de diálogo surgem com um fade rápido.
 
-As animações são sempre completas. A variável de ambiente SPECTRUM_REDUCE_MOTION=1 (uso técnico, sem
+A opção Reduzir animações está disponível nas Configurações. A variável de ambiente SPECTRUM_REDUCE_MOTION=1 (uso técnico, sem
 opção na interface) faz os botões só trocarem de estado.
 """
 import os

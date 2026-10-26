@@ -299,6 +299,7 @@ class ChemometricsEngine:
             raise ValueError("Espectro inválido para normalização pela soma.")
         return [v/sum(vec) for v in vec]
 
+    # Compatibility only: this operation divides by the sum, never standard normal variate.
     normalize_snv=normalize_sum
 
     @staticmethod

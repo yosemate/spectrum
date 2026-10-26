@@ -1,0 +1,308 @@
+test_finished_after_operation (test_analysis_messages.FinishedTests.test_finished_after_operation) ... ok
+test_not_finished_for_idle_fault_cancel (test_analysis_messages.FinishedTests.test_not_finished_for_idle_fault_cancel) ... ok
+test_every_kind_has_a_mood (test_analysis_messages.MessageTests.test_every_kind_has_a_mood) ... ok
+test_happy_phases_smile (test_analysis_messages.MessageTests.test_happy_phases_smile) ... ok
+test_no_emoji_and_not_empty (test_analysis_messages.MessageTests.test_no_emoji_and_not_empty) ... ok
+test_rotation_wraps (test_analysis_messages.MessageTests.test_rotation_wraps) ... ok
+test_alerts_are_serious (test_analysis_messages.PhaseTests.test_alerts_are_serious) ... ok
+test_auto_sequence_is_ordered (test_analysis_messages.PhaseTests.test_auto_sequence_is_ordered) ... ok
+test_calibration_titles_distinguish_white_and_dark (test_analysis_messages.PhaseTests.test_calibration_titles_distinguish_white_and_dark) ... ok
+test_every_known_state_has_a_phase (test_analysis_messages.PhaseTests.test_every_known_state_has_a_phase) ... ok
+test_reading_is_busy_and_idle_is_not (test_analysis_messages.PhaseTests.test_reading_is_busy_and_idle_is_not) ... ok
+test_steps_in_range (test_analysis_messages.PhaseTests.test_steps_in_range) ... ok
+test_unknown_and_empty_do_not_crash (test_analysis_messages.PhaseTests.test_unknown_and_empty_do_not_crash) ... ok
+test_ease_out_expo_endpoints_and_monotonic (test_animation_math.EntranceTests.test_ease_out_expo_endpoints_and_monotonic) ... ok
+test_stagger_delays_each_item (test_animation_math.EntranceTests.test_stagger_delays_each_item) ... ok
+test_blink_range_and_rest (test_animation_math.FaceTests.test_blink_range_and_rest) ... ok
+test_bounce_and_pulse_bounds (test_animation_math.FaceTests.test_bounce_and_pulse_bounds) ... ok
+test_mouth_shapes (test_animation_math.FaceTests.test_mouth_shapes) ... ok
+test_alpha_fades_out (test_animation_math.RippleTests.test_alpha_fades_out) ... ok
+test_radius_grows_to_farthest_corner (test_animation_math.RippleTests.test_radius_grows_to_farthest_corner) ... ok
+test_radius_is_clamped (test_animation_math.RippleTests.test_radius_is_clamped) ... ok
+test_points_in_unit_range_and_move (test_animation_math.SpectrumTests.test_points_in_unit_range_and_move) ... ok
+test_single_point (test_animation_math.SpectrumTests.test_single_point) ... ok
+test_critically_damped_does_not_overshoot (test_animation_math.SpringTests.test_critically_damped_does_not_overshoot) ... ok
+test_more_damping_overshoots_less (test_animation_math.SpringTests.test_more_damping_overshoots_less) ... ok
+test_never_nan (test_animation_math.SpringTests.test_never_nan) ... ok
+test_starts_at_zero_and_settles_at_one (test_animation_math.SpringTests.test_starts_at_zero_and_settles_at_one) ... ok
+test_underdamped_spring_overshoots (test_animation_math.SpringTests.test_underdamped_spring_overshoots) ... ok
+test_enters_and_leaves_outside (test_animation_math.SweepTests.test_enters_and_leaves_outside) ... ok
+test_phase_wraps (test_animation_math.SweepTests.test_phase_wraps) ... ok
+test_firmware_deadline_with_continuous_heartbeat_and_clock_wrap (test_audit_regressions.MotionDeadlineTests.test_firmware_deadline_with_continuous_heartbeat_and_clock_wrap) ... ok
+test_origin_and_context_survive_database_roundtrip (test_audit_regressions.PersistenceAuditTests.test_origin_and_context_survive_database_roundtrip) ... ok
+test_backup_restore_retains_records_and_refuses_overwrite (test_audit_regressions.DataIntegrityTests.test_backup_restore_retains_records_and_refuses_overwrite) ... ok
+test_invalidation_requires_admin_and_preserves_original_with_audit (test_audit_regressions.DataIntegrityTests.test_invalidation_requires_admin_and_preserves_original_with_audit) ... ok
+test_simulator_rejects_open_chamber_and_emergency_interrupts_wait (test_audit_regressions.DataIntegrityTests.test_simulator_rejects_open_chamber_and_emergency_interrupts_wait) ... ok
+test_simulator_seed_is_repeatable (test_audit_regressions.DataIntegrityTests.test_simulator_seed_is_repeatable) ... ok
+test_gui_safety_regressions_in_isolated_qt_process (test_audit_regressions.GuiSubprocessTests.test_gui_safety_regressions_in_isolated_qt_process) ... ok
+test_dark_scan (test_codespaces_simulator.CodespacesSimulatorTests.test_dark_scan) ... ok
+test_emergency (test_codespaces_simulator.CodespacesSimulatorTests.test_emergency) ... ok
+test_handshake (test_codespaces_simulator.CodespacesSimulatorTests.test_handshake) ... ok
+test_invalid_ids_are_rejected (test_codespaces_simulator.CodespacesSimulatorTests.test_invalid_ids_are_rejected) ... ok
+test_spectral_scan_has_token (test_codespaces_simulator.CodespacesSimulatorTests.test_spectral_scan_has_token) ... ok
+test_font_files_declared_in_typography_exist (test_glass.AssetTests.test_font_files_declared_in_typography_exist) ... ok
+test_generated_assets_exist (test_glass.AssetTests.test_generated_assets_exist) ... ok
+test_alarm_colors_are_not_used_as_button_or_identity_colors (test_glass.PaletteTests.test_alarm_colors_are_not_used_as_button_or_identity_colors)
+ISA-101: vermelho e laranja são de alarme. Tons de função não podem ter esse matiz. ... ok
+test_every_token_is_a_hex_color (test_glass.PaletteTests.test_every_token_is_a_hex_color) ... ok
+test_light_theme_uses_distinct_greens (test_glass.PaletteTests.test_light_theme_uses_distinct_greens) ... ok
+test_night_accent_is_gold (test_glass.PaletteTests.test_night_accent_is_gold) ... ok
+test_night_theme_is_dark_and_purple (test_glass.PaletteTests.test_night_theme_is_dark_and_purple) ... ok
+test_series_palettes_have_six_distinct_colors (test_glass.PaletteTests.test_series_palettes_have_six_distinct_colors) ... ok
+test_text_contrast_is_comfortable (test_glass.PaletteTests.test_text_contrast_is_comfortable) ... ok
+test_two_themes_with_the_same_tokens (test_glass.PaletteTests.test_two_themes_with_the_same_tokens) ... ok
+test_background_has_glows_for_the_translucency_to_show (test_glass.TranslucencyAndNeutralButtonTests.test_background_has_glows_for_the_translucency_to_show) ... ok
+test_buttons_are_neutral_for_every_function (test_glass.TranslucencyAndNeutralButtonTests.test_buttons_are_neutral_for_every_function)
+Cada função tem a mesma cor de botão: a cor fica nos gráficos, não nos botões. ... ok
+test_every_fill_is_a_valid_qss_color (test_glass.TranslucencyAndNeutralButtonTests.test_every_fill_is_a_valid_qss_color) ... ok
+test_no_gradient_helper_and_no_edge_light (test_glass.TranslucencyAndNeutralButtonTests.test_no_gradient_helper_and_no_edge_light) ... ok
+test_no_texture_in_any_theme (test_glass.TranslucencyAndNeutralButtonTests.test_no_texture_in_any_theme) ... ok
+test_panels_are_translucent_in_both_themes (test_glass.TranslucencyAndNeutralButtonTests.test_panels_are_translucent_in_both_themes) ... ok
+test_primary_button_is_neutral_and_readable (test_glass.TranslucencyAndNeutralButtonTests.test_primary_button_is_neutral_and_readable) ... ok
+test_rgba_format_and_clamp (test_glass.TranslucencyAndNeutralButtonTests.test_rgba_format_and_clamp) ... ok
+test_secondary_buttons_are_visible (test_glass.TranslucencyAndNeutralButtonTests.test_secondary_buttons_are_visible) ... ok
+QStandardPaths: XDG_RUNTIME_DIR not set, defaulting to '/tmp/runtime-root'
+test_adaptive_canvas_never_clips_the_layout_minimum (test_gui_smoke.GuiSmokeTests.test_adaptive_canvas_never_clips_the_layout_minimum) ... This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+ok
+test_analysis_indicator_renders_every_state (test_gui_smoke.GuiSmokeTests.test_analysis_indicator_renders_every_state) ... ok
+test_busy_shimmer_runs_even_when_button_is_disabled (test_gui_smoke.GuiSmokeTests.test_busy_shimmer_runs_even_when_button_is_disabled) ... ok
+test_buttons_and_windows_get_the_cellulose_cursor (test_gui_smoke.GuiSmokeTests.test_buttons_and_windows_get_the_cellulose_cursor) ... ok
+test_buttons_get_the_effect_layer_and_ripple (test_gui_smoke.GuiSmokeTests.test_buttons_get_the_effect_layer_and_ripple) ... ok
+test_calibration_card_has_no_compressed_text (test_gui_smoke.GuiSmokeTests.test_calibration_card_has_no_compressed_text) ... Attribute Qt::AA_EnableHighDpiScaling must be set before QCoreApplication is created.
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+This plugin does not support propagateSizeHints()
+ok
+test_canvas_has_no_texture_in_both_themes (test_gui_smoke.GuiSmokeTests.test_canvas_has_no_texture_in_both_themes)
+Sem textura de celulose; o fundo tem só brilhos suaves (para a translucidez aparecer). ... ok
+test_chart_bar_turns_red_when_saturated (test_gui_smoke.GuiSmokeTests.test_chart_bar_turns_red_when_saturated) ... ok
+test_chart_bars_get_one_color_per_band (test_gui_smoke.GuiSmokeTests.test_chart_bars_get_one_color_per_band) ... ok
+test_colored_faces_and_glyphs_paint_in_both_themes (test_gui_smoke.GuiSmokeTests.test_colored_faces_and_glyphs_paint_in_both_themes) ... ok
+test_credits_link_to_the_authors_github (test_gui_smoke.GuiSmokeTests.test_credits_link_to_the_authors_github) ... ok
+test_cursor_images_load (test_gui_smoke.GuiSmokeTests.test_cursor_images_load) ... ok
+test_detail_dialog_renders_every_indicator_in_both_themes (test_gui_smoke.GuiSmokeTests.test_detail_dialog_renders_every_indicator_in_both_themes) ... This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+ok
+test_embedded_fonts_are_registered (test_gui_smoke.GuiSmokeTests.test_embedded_fonts_are_registered) ... ok
+test_font_styles_are_regular_and_bold_only (test_gui_smoke.GuiSmokeTests.test_font_styles_are_regular_and_bold_only)
+Diagnóstico: cada família deve ter só os estilos Regular/Bold . ... ok
+test_indicator_celebrates_after_a_finished_cycle (test_gui_smoke.GuiSmokeTests.test_indicator_celebrates_after_a_finished_cycle) ... ok
+test_legacy_theme_names_migrate_to_noturno (test_gui_smoke.GuiSmokeTests.test_legacy_theme_names_migrate_to_noturno) ... ok
+test_only_two_themes_exist (test_gui_smoke.GuiSmokeTests.test_only_two_themes_exist) ... ok
+test_panels_are_translucent_over_the_background (test_gui_smoke.GuiSmokeTests.test_panels_are_translucent_over_the_background)
+O painel é translúcido: o brilho do fundo aparece por trás dele (mais de uma cor na área). ... This plugin does not support propagateSizeHints()
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support setting window opacity
+This plugin does not support propagateSizeHints()
+ok
+test_plot_widget_draws_bars_history_and_empty_state (test_gui_smoke.GuiSmokeTests.test_plot_widget_draws_bars_history_and_empty_state) ... ok
+test_press_effect_honors_reduced_motion (test_gui_smoke.GuiSmokeTests.test_press_effect_honors_reduced_motion) ... ok
+test_settings_has_only_the_appearance_section (test_gui_smoke.GuiSmokeTests.test_settings_has_only_the_appearance_section) ... ok
+test_settings_theme_buttons_switch_theme (test_gui_smoke.GuiSmokeTests.test_settings_theme_buttons_switch_theme) ... ok
+test_temperature_label_colors_follow_the_level (test_gui_smoke.GuiSmokeTests.test_temperature_label_colors_follow_the_level) ... ok
+test_terminal_dialog_takes_over_the_console (test_gui_smoke.GuiSmokeTests.test_terminal_dialog_takes_over_the_console) ... This plugin does not support setting window opacity
+ok
+test_theme_switch_updates_the_application (test_gui_smoke.GuiSmokeTests.test_theme_switch_updates_the_application) ... ok
+test_theme_switch_with_crossfade_leaves_no_overlay_behind (test_gui_smoke.GuiSmokeTests.test_theme_switch_with_crossfade_leaves_no_overlay_behind) ... This plugin does not support setting window opacity
+ok
+test_acima_de_55_e_faixa_6 (test_kappa_faixas.KappaFaixasTest.test_acima_de_55_e_faixa_6) ... ok
+test_cada_faixa_tem_cor_hexadecimal (test_kappa_faixas.KappaFaixasTest.test_cada_faixa_tem_cor_hexadecimal) ... ok
+test_fronteiras_pertencem_a_faixa_inferior (test_kappa_faixas.KappaFaixasTest.test_fronteiras_pertencem_a_faixa_inferior) ... ok
+test_valores_invalidos_nao_recebem_faixa (test_kappa_faixas.KappaFaixasTest.test_valores_invalidos_nao_recebem_faixa) ... ok
+test_espectro_plano_e_atencao_no_pico (test_kpi_status.EvaluateTest.test_espectro_plano_e_atencao_no_pico) ... ok
+test_indicador_desconhecido (test_kpi_status.EvaluateTest.test_indicador_desconhecido) ... ok
+test_leitura_boa_e_normal (test_kpi_status.EvaluateTest.test_leitura_boa_e_normal) ... ok
+test_perto_da_saturacao_e_atencao (test_kpi_status.EvaluateTest.test_perto_da_saturacao_e_atencao) ... ok
+test_pico_informa_o_comprimento_de_onda (test_kpi_status.EvaluateTest.test_pico_informa_o_comprimento_de_onda) ... ok
+test_razao_indefinida_e_erro (test_kpi_status.EvaluateTest.test_razao_indefinida_e_erro) ... ok
+test_razoes_fora_da_faixa_sao_atencao (test_kpi_status.EvaluateTest.test_razoes_fora_da_faixa_sao_atencao) ... ok
+test_saturacao_e_erro_e_aponta_o_canal (test_kpi_status.EvaluateTest.test_saturacao_e_erro_e_aponta_o_canal) ... ok
+test_sem_leitura (test_kpi_status.EvaluateTest.test_sem_leitura) ... ok
+test_sinal_baixo_e_erro (test_kpi_status.EvaluateTest.test_sinal_baixo_e_erro) ... ok
+test_todo_nivel_tem_rotulo_e_cor (test_kpi_status.EvaluateTest.test_todo_nivel_tem_rotulo_e_cor) ... ok
+test_valor_da_razao (test_kpi_status.EvaluateTest.test_valor_da_razao) ... ok
+test_valor_invalido (test_kpi_status.EvaluateTest.test_valor_invalido) ... ok
+test_faixas_do_esp32 (test_kpi_status.TemperatureTest.test_faixas_do_esp32) ... ok
+test_faixas_do_sensor_sao_mais_estreitas (test_kpi_status.TemperatureTest.test_faixas_do_sensor_sao_mais_estreitas) ... ok
+test_todo_nivel_tem_cor_e_rotulo (test_kpi_status.TemperatureTest.test_todo_nivel_tem_cor_e_rotulo) ... ok
+test_valores_invalidos (test_kpi_status.TemperatureTest.test_valores_invalidos) ... ok
+test_intervalo_invalido (test_kpi_status.TicksTest.test_intervalo_invalido) ... ok
+test_marcas_redondas (test_kpi_status.TicksTest.test_marcas_redondas) ... ok
+test_window_and_tcp_scan (test_platform_integration.PlatformIntegrationTests.test_window_and_tcp_scan) ... [SIM] cliente conectado: ('127.0.0.1', 54660)
+[SIM] <- CMD:ESTADO_PORTA
+[SIM] -> PORTA:ABERTA:0|FECHADA:1|CARCACA_FECHADA:1|SENSOR_RECUADO:1|SENSOR_AVANCADO:0
+[SIM] <- CMD:PING
+[SIM] -> STATUS:PROTOCOLO_2
+[SIM] -> STATUS:PORTA_PROTOCOLO_1
+[SIM] -> STATUS:MANUAL_PROTOCOLO_1
+[SIM] -> STATUS:CARRINHO_PROTOCOLO_1
+[SIM] -> STATUS:ADMIN_PROTOCOLO_1
+[SIM] -> STATUS:SENSOR_OK
+[SIM] -> IDENTITY:{"origin": "SIMULADA", "device_id": "spectrum-simulator", "firmware": "simulator-1", "protocol": 2}
+[SIM] -> PORTA:ABERTA:0|FECHADA:1|CARCACA_FECHADA:1|SENSOR_RECUADO:1|SENSOR_AVANCADO:0
+[SIM] -> STATUS:PONG
+[SIM] <- CMD:AVANCAR_SENSOR
+[SIM] -> PORTA:ABERTA:0|FECHADA:1|CARCACA_FECHADA:1|SENSOR_RECUADO:0|SENSOR_AVANCADO:1
+[SIM] -> STATUS:SENSOR_AVANCADO
+[SIM] <- CMD:LER_ESPECTRO:platform_test
+[SIM] <- CMD:PING
+[SIM] -> STATUS:PROTOCOLO_2
+[SIM] -> STATUS:PORTA_PROTOCOLO_1
+[SIM] -> STATUS:MANUAL_PROTOCOLO_1
+[SIM] -> STATUS:CARRINHO_PROTOCOLO_1
+[SIM] -> STATUS:ADMIN_PROTOCOLO_1
+[SIM] -> STATUS:SENSOR_OK
+[SIM] -> IDENTITY:{"origin": "SIMULADA", "device_id": "spectrum-simulator", "firmware": "simulator-1", "protocol": 2}
+[SIM] -> PORTA:ABERTA:0|FECHADA:1|CARCACA_FECHADA:1|SENSOR_RECUADO:0|SENSOR_AVANCADO:1
+[SIM] -> STATUS:PONG
+[SIM] <- CMD:DIAG_SENSOR
+[SIM] -> ESPDIAG:TEMP:37.0|CPU_MHZ:240|HEAP_FREE:152231|HEAP_TOTAL:327680
+[SIM] -> DIAG:TEMP:27.0|HW:SIMULADOR|STATUS:SIMULADO
+[SIM] -> SCAN:platform_test|DATA:2457,2816,3259,3122,2539,2096
+[SIM] -> STATUS:LEITURA_CONCLUIDA:platform_test
+[SIM] <- CMD:EMERGENCIA
+[SIM] -> STATUS:EMERGENCIA_ACIONADA
+[SIM] cliente desconectado: ('127.0.0.1', 54660)
+ok
+test_degenerate_inputs_do_not_crash (test_responsive_math.FitTests.test_degenerate_inputs_do_not_crash) ... ok
+test_full_hd_grows_the_text_a_little (test_responsive_math.FitTests.test_full_hd_grows_the_text_a_little) ... ok
+test_logical_size_always_covers_the_window (test_responsive_math.FitTests.test_logical_size_always_covers_the_window) ... ok
+test_never_exceeds_max_scale (test_responsive_math.FitTests.test_never_exceeds_max_scale) ... ok
+test_reference_size_is_one_to_one (test_responsive_math.FitTests.test_reference_size_is_one_to_one) ... ok
+test_scale_shrinks_only_as_much_as_the_content_needs (test_responsive_math.FitTests.test_scale_shrinks_only_as_much_as_the_content_needs) ... ok
+test_small_laptop_keeps_the_text_readable (test_responsive_math.FitTests.test_small_laptop_keeps_the_text_readable)
+1366x768: antes a escala era 0,77 (14 px viravam 10,8 px); agora fica em 0,90. ... ok
+test_breakpoints_are_ordered (test_responsive_math.LayoutModeTests.test_breakpoints_are_ordered) ... ok
+test_laptop_gets_a_two_row_header_only (test_responsive_math.LayoutModeTests.test_laptop_gets_a_two_row_header_only) ... ok
+test_tablet_portrait_stacks (test_responsive_math.LayoutModeTests.test_tablet_portrait_stacks) ... ok
+test_wide_landscape_is_the_full_layout (test_responsive_math.LayoutModeTests.test_wide_landscape_is_the_full_layout) ... ok
+test_calibracao_ausente_pede_calibrar (test_scan_blocker.ScanBlockerTest.test_calibracao_ausente_pede_calibrar) ... ok
+test_equipamento_em_movimento_bloqueia (test_scan_blocker.ScanBlockerTest.test_equipamento_em_movimento_bloqueia) ... ok
+test_erro_de_calibracao_tem_prioridade_sobre_o_texto_padrao (test_scan_blocker.ScanBlockerTest.test_erro_de_calibracao_tem_prioridade_sobre_o_texto_padrao) ... ok
+test_firmware_sem_protocolo_de_porta_e_carrinho_pede_atualizacao (test_scan_blocker.ScanBlockerTest.test_firmware_sem_protocolo_de_porta_e_carrinho_pede_atualizacao) ... ok
+test_ordem_dos_motivos (test_scan_blocker.ScanBlockerTest.test_ordem_dos_motivos) ... ok
+test_pronto_quando_tudo_confirmado (test_scan_blocker.ScanBlockerTest.test_pronto_quando_tudo_confirmado) ... ok
+test_sem_conexao_orienta_a_conectar_e_o_simulador (test_scan_blocker.ScanBlockerTest.test_sem_conexao_orienta_a_conectar_e_o_simulador) ... ok
+test_font_files_exist (test_typography.AssetsTests.test_font_files_exist) ... ok
+test_license_ships_with_fonts (test_typography.AssetsTests.test_license_ships_with_fonts) ... ok
+test_bold_is_dropped_for_regular_only_families (test_typography.HierarchyTests.test_bold_is_dropped_for_regular_only_families) ... ok
+test_display_stack_falls_back_to_the_ui_font_for_missing_signs (test_typography.HierarchyTests.test_display_stack_falls_back_to_the_ui_font_for_missing_signs) ... ok
+test_garamond_is_gone_and_new_fonts_are_loaded (test_typography.HierarchyTests.test_garamond_is_gone_and_new_fonts_are_loaded) ... ok
+test_hierarchy_families (test_typography.HierarchyTests.test_hierarchy_families) ... ok
+test_legacy_garamond_maps_to_dropline (test_typography.HierarchyTests.test_legacy_garamond_maps_to_dropline) ... ok
+test_all_sizes_on_scale (test_typography.QssTests.test_all_sizes_on_scale) ... ok
+test_big_sizes_get_default_family (test_typography.QssTests.test_big_sizes_get_default_family) ... ok
+test_braces_stay_balanced (test_typography.QssTests.test_braces_stay_balanced) ... ok
+test_explicit_family_is_respected (test_typography.QssTests.test_explicit_family_is_respected) ... ok
+test_families_are_mapped (test_typography.QssTests.test_families_are_mapped) ... ok
+test_idempotent (test_typography.QssTests.test_idempotent) ... ok
+test_line_height_and_letter_spacing_removed (test_typography.QssTests.test_line_height_and_letter_spacing_removed) ... ok
+test_role_qss (test_typography.QssTests.test_role_qss) ... ok
+test_small_sizes_keep_app_font (test_typography.QssTests.test_small_sizes_keep_app_font) ... ok
+test_untouched_when_no_font_properties (test_typography.QssTests.test_untouched_when_no_font_properties) ... ok
+test_legacy_sizes_map_to_readable_steps (test_typography.SnapTests.test_legacy_sizes_map_to_readable_steps) ... ok
+test_minimum_is_12 (test_typography.SnapTests.test_minimum_is_12) ... ok
+test_only_regular_and_bold_in_any_role (test_typography.SnapTests.test_only_regular_and_bold_in_any_role) ... ok
+test_scale_values_are_fixed_points (test_typography.SnapTests.test_scale_values_are_fixed_points) ... ok
+test_sizes_land_on_scale (test_typography.SnapTests.test_sizes_land_on_scale) ... ok
+test_weights (test_typography.SnapTests.test_weights) ... ok
+test_weights_are_idempotent (test_typography.SnapTests.test_weights_are_idempotent) ... ok
+test_reference_sample_save_and_export (test_workflow_integration.WorkflowIntegrationTests.test_reference_sample_save_and_export) ... ok
+
+----------------------------------------------------------------------
+Ran 155 tests in 20.666s
+
+OK

@@ -9,6 +9,7 @@ do executável compilado (.exe) ou do script Python.
 import sys
 import os
 import sqlite3
+import datetime
 from contextlib import contextmanager
 from typing import List, Dict, Optional, Tuple
 from runtime_data import resolve_database_path
@@ -90,10 +91,16 @@ class DatabaseManager:
                     ref_860 REAL
                 )
             """)
+            cursor.execute("""CREATE TABLE IF NOT EXISTS audit_events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT, reading_id INTEGER NOT NULL,
+                actor TEXT NOT NULL, action TEXT NOT NULL, reason TEXT NOT NULL,
+                timestamp TEXT NOT NULL)""")
             # Verificação e migração automática de colunas para bancos pré-existentes
             cursor.execute("PRAGMA table_info(leituras_historico)")
             existing_cols = {row[1] for row in cursor.fetchall()}
             expected_cols = {
+                "invalidated_at":"TEXT", "invalidated_by":"TEXT", "invalidation_reason":"TEXT",
+                "origin":"TEXT", "trial_context_json":"TEXT",
                 "calibration_id":"TEXT", "calibration_snapshot":"TEXT",
                 "acquisition_count":"INTEGER", "raw_scans_json":"TEXT",
                 "codigo_amostra": "TEXT", "timestamp": "TEXT", "operador": "TEXT", "metodo_analitico": "TEXT",
@@ -280,6 +287,8 @@ class DatabaseManager:
             cursor.execute("UPDATE leituras_historico SET calibration_id=?, calibration_snapshot=?, acquisition_count=?, raw_scans_json=? WHERE id=?",
                 (dados.get("calibration_id"),dados.get("calibration_snapshot"),
                  dados.get("acquisition_count"),dados.get("raw_scans_json"),leitura_id))
+            cursor.execute("UPDATE leituras_historico SET origin=?, trial_context_json=? WHERE id=?",
+                           (dados.get("origin", "NAO_CONFIRMADA"), dados.get("trial_context_json", "{}"), leitura_id))
             conn.commit()
             return leitura_id
 
@@ -312,14 +321,21 @@ class DatabaseManager:
             return dict(row) if row else None
 
     def excluir_leitura(self, leitura_id: int) -> bool:
-        """Exclui permanentemente uma leitura pelo seu ID."""
-        try:
-            with self._get_connection() as conn:
-                cursor = conn.cursor()
-                cursor.execute("DELETE FROM leituras_historico WHERE id = ?", (leitura_id,))
-                conn.commit()
-                return cursor.rowcount > 0
-        except Exception:
-            return False
+        """Legacy API deliberately refuses permanent deletion. Use invalidar_leitura."""
+        raise PermissionError("Exclusão permanente desativada; invalide com autor e motivo.")
 
-
+    def invalidar_leitura(self, leitura_id: int, actor_id: int, reason: str) -> bool:
+        """Enforces permission and records invalidation atomically, retaining the original data."""
+        if not isinstance(reason, str) or not reason.strip():
+            raise ValueError("Motivo obrigatório.")
+        now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        with self._get_connection() as conn:
+            actor = conn.execute("SELECT username, role FROM usuarios WHERE id=?", (actor_id,)).fetchone()
+            if not actor or actor[1] != "admin":
+                raise PermissionError("Somente administrador autenticado pode invalidar ensaios.")
+            changed = conn.execute("UPDATE leituras_historico SET invalidated_at=?, invalidated_by=?, invalidation_reason=? WHERE id=? AND invalidated_at IS NULL",
+                                   (now, actor[0], reason.strip(), leitura_id)).rowcount
+            if changed:
+                conn.execute("INSERT INTO audit_events(reading_id, actor, action, reason, timestamp) VALUES(?, ?, 'INVALIDAR', ?, ?)",
+                             (leitura_id, actor[0], reason.strip(), now))
+            return bool(changed)

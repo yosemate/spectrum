@@ -1,0 +1,8 @@
+test_motion_sends_updated_limits_before_confirmation (test_fake_esp32.FakeESP32Tests.test_motion_sends_updated_limits_before_confirmation) ... ok
+test_untagged_scan_never_returns_reading (test_fake_esp32.FakeESP32Tests.test_untagged_scan_never_returns_reading) ... ok
+test_white_and_dark_scans_have_ids_and_separate_signals (test_fake_esp32.FakeESP32Tests.test_white_and_dark_scans_have_ids_and_separate_signals) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 8.764s
+
+OK

@@ -1,0 +1,42 @@
+==> Pacotes do sistema (display virtual, acesso pelo navegador e bibliotecas do Qt)
+E: setgroups 65534 failed - setgroups (1: Operation not permitted)
+E: setegid 65534 failed - setegid (22: Invalid argument)
+E: seteuid 42 failed - seteuid (22: Invalid argument)
+E: setgroups 0 failed - setgroups (1: Operation not permitted)
+rm: cannot remove '/var/cache/apt/archives/partial/*.deb': Permission denied
+Reading package lists...
+W: chown to _apt:root of directory /var/lib/apt/lists/partial failed - SetupAPTPartialDirectory (22: Invalid argument)
+W: chown to _apt:root of directory /var/lib/apt/lists/auxfiles failed - SetupAPTPartialDirectory (22: Invalid argument)
+E: setgroups 65534 failed - setgroups (1: Operation not permitted)
+E: setegid 65534 failed - setegid (22: Invalid argument)
+E: seteuid 42 failed - seteuid (22: Invalid argument)
+E: setgroups 0 failed - setgroups (1: Operation not permitted)
+E: Method gave invalid 400 URI Failure message: Failed to setgroups - setgroups (1: Operation not permitted)
+E: Method https has died unexpectedly!
+E: Sub-process https returned an error code (112)
+AVISO: apt-get update não terminou (possível repositório externo, como Yarn).
+Tentando instalar dependências apenas a partir das fontes autenticadas já disponíveis.
+Reading package lists...
+Building dependency tree...
+Reading state information...
+Package fonts-liberation is not available, but is referred to by another package.
+This may mean that the package is missing, has been obsoleted, or
+is only available from another source
+
+Package python3-venv is not available, but is referred to by another package.
+This may mean that the package is missing, has been obsoleted, or
+is only available from another source
+
+Package x11-utils is not available, but is referred to by another package.
+This may mean that the package is missing, has been obsoleted, or
+is only available from another source
+
+E: Package 'python3-venv' has no installation candidate
+E: Unable to locate package xvfb
+E: Package 'x11-utils' has no installation candidate
+E: Unable to locate package x11vnc
+E: Unable to locate package novnc
+E: Unable to locate package websockify
+E: Unable to locate package fluxbox
+E: Unable to locate package libxcb-cursor0
+E: Package 'fonts-liberation' has no installation candidate

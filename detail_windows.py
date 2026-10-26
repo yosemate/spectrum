@@ -314,13 +314,12 @@ class KpiDetailDialog(QDialog):
     def refresh(self):
         w = self.window_ref
         kind = self.kind
-        raw = getattr(w, "current_scan_data", None)
-        snv = getattr(w, "current_r_snv", None)
+        raw, snv = available_reading(w)
         history = list(getattr(w, "_kpi_history", ()))
         status = ks.evaluate(kind, raw, snv)
         pal = _palette()
         self.badge.set_status(status.level)
-        self.lbl_headline.setText(status.headline)
+        self.lbl_headline.setText(getattr(w, "_reading_unavailable_reason", "") or status.headline)
         self.lbl_hints.setText("\n".join("• " + hint for hint in status.hints))
         self.lbl_hints.setVisible(bool(status.hints))
         self.lbl_value.setText(self._value_text(raw, snv))
@@ -457,10 +456,15 @@ def card_status_text(level):
     return {ks.NONE: "", ks.OK: "Normal", ks.ATTENTION: "Atenção", ks.ERROR: "Erro"}[level]
 
 
+def available_reading(window):
+    if not getattr(window, "_result_valid", False):
+        return None, None
+    return getattr(window, "current_scan_data", None), getattr(window, "current_r_snv", None)
+
+
 def update_cards(window):
     """Pinta o estado nos quatro cartões do painel principal."""
-    raw = getattr(window, "current_scan_data", None)
-    snv = getattr(window, "current_r_snv", None)
+    raw, snv = available_reading(window)
     for kind, card in _cards(window).items():
         level = ks.evaluate(kind, raw, snv).level
         card.set_status(level, card_status_text(level))

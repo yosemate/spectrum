@@ -153,3 +153,5 @@ ou `/dev/ttyACM*` (grupo `dialout` nas distribuições Debian/Ubuntu).
 O workflow `Windows and Linux runtime` valida Python 3.11/3.12 nas duas plataformas,
 a janela real, o handshake e um scan por TCP. Um job adicional testa Xvfb + xcb e
 HTTP do noVNC em Linux. Não substitui a validação física dos motores e do sensor.
+
+Por padrão, noVNC escuta somente em 127.0.0.1. No Codespaces mantenha a porta 6080 privada; qualquer alteração de NOVNC_BIND exige definir a proteção de acesso da implantação.

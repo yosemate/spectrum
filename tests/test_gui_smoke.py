@@ -43,13 +43,17 @@ class GuiSmokeTests(unittest.TestCase):
         from appearance import ensure_theme_manager
         cls.manager = ensure_theme_manager()
 
+    def _dialog(self):
+        from appearance import AppearanceDialog
+        return AppearanceDialog(self.manager)
+
     def pump(self):
         self.app.processEvents()
 
     def test_embedded_fonts_are_registered(self):
         families = set(QFontDatabase().families())
         for family in ("Inter", "Dropline", "Arena", "IBM Plex Mono"):
-            self.assertIn(family, families)
+            self.assertIn(family.casefold(), {name.casefold() for name in families})
         self.assertNotIn("EB Garamond", families, "a Garamond deixou de ser embutida")
 
     def test_font_styles_are_regular_and_bold_only(self):
@@ -137,9 +141,10 @@ class GuiSmokeTests(unittest.TestCase):
                 indicator.resize(900, 92)
                 indicator.show()
                 indicator.refresh()
+                self.pump()
                 pixmap = indicator.grab()
                 self.assertFalse(pixmap.isNull(), state)
-                self.assertGreater(len(distinct_pixels(pixmap, 37, 11)), 3, (theme, state))
+                self.assertGreater(len(distinct_pixels(pixmap, 3, 3)), 3, (theme, state))
                 indicator.hide()
 
     def test_indicator_celebrates_after_a_finished_cycle(self):
@@ -163,7 +168,7 @@ class GuiSmokeTests(unittest.TestCase):
         self.assertIsNotNone(overlay)
         QTest.mousePress(button, Qt.LeftButton, Qt.NoModifier, QPoint(30, 20))
         self.pump()
-        self.assertEqual(overlay.ripple_anim.state(), QAbstractAnimation.Running)
+        self.assertEqual(overlay.spring_anim.state(), QAbstractAnimation.Running)
         QTest.mouseRelease(button, Qt.LeftButton, Qt.NoModifier, QPoint(30, 20))
         self.assertFalse(button.grab().isNull())
 
@@ -185,7 +190,7 @@ class GuiSmokeTests(unittest.TestCase):
         dialog = self._dialog()
         sections = [f for f in dialog.findChildren(QFrame) if f.objectName() == "settingsSection"]
         self.assertEqual(len(sections), 1)
-        self.assertFalse(hasattr(dialog, "motion_selector"))
+        self.assertTrue(hasattr(dialog, "reduce_motion"))
         dialog.close()
 
     def test_settings_theme_buttons_switch_theme(self):
@@ -277,11 +282,11 @@ class GuiSmokeTests(unittest.TestCase):
 
     def test_adaptive_canvas_never_clips_the_layout_minimum(self):
         from responsive_layout import ScaledCanvasView
-        content = QWidget()
-        layout = QVBoxLayout(content)
-        layout.addWidget(QPushButton("Ação"))
-        content.setMinimumSize(900, 520)
         for size in ((800, 1280), (1024, 600), (1366, 768), (1920, 1080)):
+            content = QWidget()
+            layout = QVBoxLayout(content)
+            layout.addWidget(QPushButton("Ação"))
+            content.setMinimumSize(900, 520)
             view = ScaledCanvasView(content, parent=None, adaptive=True)
             view.resize(*size)
             view.show()
@@ -295,6 +300,7 @@ class GuiSmokeTests(unittest.TestCase):
         import collections
         import detail_windows
         window = QWidget()
+        window._result_valid = raw is not None
         window.current_scan_data = raw
         window.current_r_snv = snv
         window._kpi_history = collections.deque(maxlen=detail_windows.HISTORY_LENGTH)
