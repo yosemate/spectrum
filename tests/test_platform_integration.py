@@ -52,6 +52,8 @@ def until(predicate):
 try:
     until(lambda: window._protocol_ready and window._sensor_ready and window.equipment.capable)
     assert window.is_simulation_target()
+    worker.send_command('CMD:AVANCAR_SENSOR')
+    until(lambda: window.equipment.carriage_advanced)
     worker.send_command('CMD:LER_ESPECTRO:platform_test')
     until(lambda: bool(scans))
     assert scans[0][0] == 'platform_test' and len(scans[0][1]) == 6

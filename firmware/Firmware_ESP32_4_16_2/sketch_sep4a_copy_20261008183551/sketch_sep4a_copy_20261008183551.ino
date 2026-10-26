@@ -20,6 +20,17 @@ const int PORTA_PARAR_US=1500, PORTA_ABRIR_US=1100, PORTA_FECHAR_US=1900;
 const int PINO_FC_SENSOR_RECUADO=32, PINO_FC_SENSOR_AVANCADO=33;
 const int SENSOR_PARAR_US=1500, SENSOR_AVANCAR_US=1300, SENSOR_RECUAR_US=1700;
 const unsigned long FC_DEBOUNCE_MS=30;
+// Provisional engineering limits: MUST be commissioned on the physical bench.
+// Independent of the communication watchdog; heartbeat never extends travel.
+const unsigned long PORTA_PERCURSO_MS=15000, CARRINHO_PERCURSO_MS=10000;
+const unsigned long PORTA_LIBERACAO_MS=2000, CARRINHO_LIBERACAO_MS=2000;
+bool falhaMovimentoTravada=false;
+
+bool prazoMovimentoExcedido(unsigned long agora, unsigned long inicio,
+                            unsigned long percurso, unsigned long liberacao,
+                            bool origemAtiva, bool origemLiberada) {
+  return agora-inicio>=percurso || (!origemLiberada && origemAtiva && agora-inicio>=liberacao);
+}
 bool carrinhoMovendo=false, falhaFinsCarrinho=false;
 bool ultimoFcRecuado=false, ultimoFcAvancado=false;
 bool portaMovendo=false, falhaCarcaca=false, leituraEmCurso=false, avancandoSensor=false, movendoGaveta=false;
@@ -185,12 +196,14 @@ void atualizarFinsCurso() {
     pararCarrinho();
   }
   if (fcSensorRecuado.bruto && fcSensorAvancado.bruto) {
+    falhaMovimentoTravada=true;
     pararCarrinho();
     if (ocupado) abortarMovimento=true;
     if (!falhaFinsCarrinho) responder("STATUS:CARRINHO_ERRO:FINS_CONTRADITORIOS");
     falhaFinsCarrinho=true;
   } else falhaFinsCarrinho=false;
-  if (portaMovendo && fcPortaAberta.bruto && fcPortaFechada.bruto) {
+  if (fcPortaAberta.bruto && fcPortaFechada.bruto) {
+    falhaMovimentoTravada=true;
     pararPorta();
     abortarMovimento=true;
     responder("STATUS:PORTA_ERRO:FINS_CONTRADITORIOS");
@@ -273,16 +286,27 @@ bool moverPara(Servo &servo,int pino,int &pos,int destino,int intervalo=15,bool 
 }
 
 bool moverPorta(bool abrir) {
-  if (!carcacaSegura()) return false;
+  if (falhaMovimentoTravada || !carcacaSegura()) return false;
   if (fcPortaAberta.bruto && fcPortaFechada.bruto) {
+    falhaMovimentoTravada=true;
     responder("STATUS:PORTA_ERRO:FINS_CONTRADITORIOS");
     return false;
   }
   FimCurso &destino=abrir ? fcPortaAberta : fcPortaFechada;
   responder(abrir ? "STATUS:ABRINDO_PORTA" : "STATUS:FECHANDO_PORTA");
-  // Sem limite de percurso; heartbeat permanece obrigatorio durante movimento.
+  FimCurso &origem=abrir ? fcPortaFechada : fcPortaAberta;
+  const unsigned long inicio=millis();
+  bool origemLiberada=!origem.bruto;
   while (true) {
     pollInputs();
+    if (!origem.bruto) origemLiberada=true;
+    if (prazoMovimentoExcedido(millis(),inicio,PORTA_PERCURSO_MS,PORTA_LIBERACAO_MS,origem.bruto,origemLiberada)) {
+      pararPorta();
+      falhaMovimentoTravada=true;
+      abortarMovimento=true;
+      responder(millis()-inicio>=PORTA_PERCURSO_MS ? "STATUS:PORTA_ERRO:PRAZO_PERCURSO" : "STATUS:PORTA_ERRO:ORIGEM_NAO_LIBERADA");
+      return false;
+    }
     if (abortarMovimento || !carcacaSegura()) { pararPorta(); return false; }
     if (millis()-ultimaAtividade>6000) {
       pararPorta();
@@ -292,6 +316,8 @@ bool moverPorta(bool abrir) {
     }
     if (fcPortaAberta.bruto && fcPortaFechada.bruto) {
       pararPorta();
+      falhaMovimentoTravada=true;
+      abortarMovimento=true;
       responder("STATUS:PORTA_ERRO:FINS_CONTRADITORIOS");
       return false;
     }
@@ -312,10 +338,21 @@ bool moverPorta(bool abrir) {
 }
 
 bool moverCarrinho(bool avancar) {
-  if (!carcacaSegura()) return false;
+  if (falhaMovimentoTravada || !carcacaSegura()) return false;
   FimCurso &destino=avancar ? fcSensorAvancado : fcSensorRecuado;
+  FimCurso &origem=avancar ? fcSensorRecuado : fcSensorAvancado;
+  const unsigned long inicio=millis();
+  bool origemLiberada=!origem.bruto;
   while (true) {
     pollInputs();
+    if (!origem.bruto) origemLiberada=true;
+    if (prazoMovimentoExcedido(millis(),inicio,CARRINHO_PERCURSO_MS,CARRINHO_LIBERACAO_MS,origem.bruto,origemLiberada)) {
+      pararCarrinho();
+      falhaMovimentoTravada=true;
+      abortarMovimento=true;
+      responder(millis()-inicio>=CARRINHO_PERCURSO_MS ? "STATUS:CARRINHO_ERRO:PRAZO_PERCURSO" : "STATUS:CARRINHO_ERRO:ORIGEM_NAO_LIBERADA");
+      return false;
+    }
     if (abortarMovimento || !carcacaSegura()) { pararCarrinho(); return false; }
     if (millis()-ultimaAtividade>6000) {
       pararCarrinho();
@@ -325,6 +362,8 @@ bool moverCarrinho(bool avancar) {
     }
     if (fcSensorRecuado.bruto && fcSensorAvancado.bruto) {
       pararCarrinho();
+      falhaMovimentoTravada=true;
+      abortarMovimento=true;
       responder("STATUS:CARRINHO_ERRO:FINS_CONTRADITORIOS");
       return false;
     }
@@ -343,6 +382,7 @@ bool moverCarrinho(bool avancar) {
 }
 
 void paradaEmergencia() {
+  falhaMovimentoTravada=true;
   pararPorta();
   pararCarrinho();
   revogarCarcaca();
@@ -426,6 +466,7 @@ void processarComando(String cmd,int canal) {
     responder("STATUS:ADMIN_PROTOCOLO_1");
     enviarEstadoPorta();
     responder(sensorConectado ? "STATUS:SENSOR_OK" : "STATUS:SENSOR_ERRO");
+    responder("IDENTITY:{\"origin\":\"REAL\",\"device_id\":\""+String(ESP.getEfuseMac(),HEX)+"\",\"firmware\":\"4.16.2-audit1\",\"protocol\":2}");
     responder("STATUS:PONG");
     return;
   }
@@ -435,6 +476,22 @@ void processarComando(String cmd,int canal) {
     pararCarrinho();
     if (sensorConectado) driverOff();
     if (!ocupado) paradaEmergencia();
+    return;
+  }
+  if (cmd=="CMD:REARMAR") {
+    if (ocupado || !carcacaFisicamenteFechada() ||
+        (fcPortaAberta.bruto && fcPortaFechada.bruto) ||
+        (fcSensorRecuado.bruto && fcSensorAvancado.bruto)) {
+      responder("STATUS:COMANDO_ERRO:REARME_BLOQUEADO");
+    } else {
+      falhaMovimentoTravada=false;
+      responder("STATUS:REARME_CONFIRMADO");
+      enviarEstadoPorta();
+    }
+    return;
+  }
+  if (falhaMovimentoTravada && cmd!="CMD:ESTADO_PORTA" && cmd!="CMD:ESTADO_CARRINHO" && cmd!="CMD:DIAG_SENSOR") {
+    responder("STATUS:COMANDO_ERRO:REARME_NECESSARIO");
     return;
   }
   // O supervisório valida usuário/senha; nenhuma senha trafega no protocolo.

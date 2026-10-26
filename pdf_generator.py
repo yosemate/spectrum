@@ -5,6 +5,10 @@ import io
 import json
 import math
 import statistics
+import sys
+from pathlib import Path
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from xml.sax.saxutils import escape
 
 from matplotlib.figure import Figure
@@ -53,10 +57,11 @@ def generate_pdf_report(filename, sample_id=None, operator=None, kappa_value=Non
                         global_intensity_adc=None, peak_wavelength_nm=None,
                         peak_intensity_adc=None, com_port=None, timestamp=None,
                         material_name=None, match_percentage=None,
-                        calibration_snapshot=None, acquisition_count=0, raw_scans=None):
+                        calibration_snapshot=None, acquisition_count=0, raw_scans=None, trial_context=None):
     """Keep the public API; historical records never inherit today's reference."""
     kappa_status = classify_experimental_kappa(float(kappa_value))[0] if _number(kappa_value) is not None else MISSING
     reference = calibration_snapshot or {}
+    trial_context = trial_context or {}
     refs = _vector(values)
     adc = _vector(raw_adc_values)
     white = _vector(reference.get('vetor_branco'))
@@ -78,17 +83,24 @@ def generate_pdf_report(filename, sample_id=None, operator=None, kappa_value=Non
         index = adc.index(max(adc)); peak_wavelength_nm = WAVELENGTHS[index]; peak_intensity_adc = adc[index]
 
     doc = SimpleDocTemplate(str(filename), pagesize=A4, leftMargin=42, rightMargin=42,
-                            topMargin=62, bottomMargin=48, title='Relatório experimental de leitura espectral - ' + str(sample_id or MISSING),
+                            topMargin=52, bottomMargin=48, title='Relatório experimental de leitura espectral - ' + str(sample_id or MISSING),
                             author='SPECTRUM-LAB PRO', subject='Caracterização espectral e rastreabilidade instrumental')
     width = doc.width
-    body = ParagraphStyle('Body', fontName='Helvetica', fontSize=9, leading=13, textColor=colors.HexColor(NAVY))
+    font_root = Path(getattr(sys, '_MEIPASS', Path(__file__).resolve().parent)) / 'assets' / 'fonts'
+    regular, bold = 'Helvetica', 'Helvetica-Bold'
+    if (font_root / 'Inter-Regular.ttf').is_file() and (font_root / 'Inter-Bold.ttf').is_file():
+        pdfmetrics.registerFont(TTFont('SpectrumInter', str(font_root / 'Inter-Regular.ttf')))
+        pdfmetrics.registerFont(TTFont('SpectrumInterBold', str(font_root / 'Inter-Bold.ttf')))
+        regular, bold = 'SpectrumInter', 'SpectrumInterBold'
+
+    body = ParagraphStyle('Body', fontName=regular, fontSize=9, leading=13, textColor=colors.HexColor(NAVY))
     small = ParagraphStyle('Small', parent=body, fontSize=7.7, leading=10.5, textColor=colors.HexColor(MUTED))
-    heading = ParagraphStyle('Heading', parent=body, fontName='Helvetica-Bold', fontSize=11, leading=15,
+    heading = ParagraphStyle('Heading', parent=body, fontName=bold, fontSize=11, leading=15,
                              spaceBefore=10, spaceAfter=6, keepWithNext=True)
-    title = ParagraphStyle('Title', parent=body, fontName='Helvetica-Bold', fontSize=24, leading=29, spaceAfter=5)
-    label = ParagraphStyle('Label', parent=small, fontName='Helvetica-Bold', fontSize=7.2, leading=10)
-    table_head = ParagraphStyle('TableHead', parent=small, fontName='Helvetica-Bold', textColor=colors.white)
-    result = ParagraphStyle('Result', parent=body, fontName='Helvetica-Bold', fontSize=30, leading=37, textColor=colors.HexColor(TEAL))
+    title = ParagraphStyle('Title', parent=body, fontName=bold, fontSize=24, leading=29, spaceAfter=5)
+    label = ParagraphStyle('Label', parent=small, fontName=bold, fontSize=7.2, leading=10)
+    table_head = ParagraphStyle('TableHead', parent=small, fontName=bold, textColor=colors.white)
+    result = ParagraphStyle('Result', parent=body, fontName=bold, fontSize=30, leading=37, textColor=colors.HexColor(TEAL))
     def p(text, style=body):
         return Paragraph(text, style)
     def section(text):
@@ -130,7 +142,16 @@ def generate_pdf_report(filename, sample_id=None, operator=None, kappa_value=Non
         c.drawRightString(pw-42, 24, f'Página {document.page}')
         c.restoreState()
 
-    story = [p('Relatório experimental<br/>de leitura espectral', title), p('Caracterização espectral e estimativa demonstrativa de Kappa', body), Spacer(1, 14)]
+    story = [p('Relatório experimental<br/>de leitura espectral', title), p('Caracterização espectral e estimativa demonstrativa de Kappa', body), Spacer(1, 8)]
+    story.append(p('Origem: ' + _text(trial_context.get('origin', 'NAO_CONFIRMADA')), heading))
+    invalidation = trial_context.get('invalidation')
+    if invalidation:
+        story.append(p('REGISTRO INVALIDADO: ' + _text(invalidation.get('reason')) + ' / ' + _text(invalidation.get('by')) + ' / ' + _text(invalidation.get('at')), heading))
+    device = trial_context.get('device') or {}
+    story.append(cards([('ID do ensaio', trial_context.get('trial_id')),
+                        ('Início (UTC)', trial_context.get('started_at')),
+                        ('Bancada', device.get('device_id')), ('Firmware / protocolo', str(device.get('firmware', MISSING)) + ' / ' + str(device.get('protocol', MISSING)))]))
+    story.append(p('Resultado principal calculado da média espectral; estimativa demonstrativa sem validação analítica.', small))
     story.append(cards([('Amostra', sample_id), ('Operador', operator), ('Data da medição', timestamp), ('Método operacional', mode)]))
     story.append(section('01  /  Resultado do ensaio'))
     result_card = Table([[p('KAPPA DEMONSTRATIVO', label), p('FAIXA DO MODELO EXPERIMENTAL', label)],
@@ -162,11 +183,11 @@ def generate_pdf_report(filename, sample_id=None, operator=None, kappa_value=Non
         if value is not None: ax.annotate(_fmt(value, 1), (i, value), xytext=(0,5), textcoords='offset points', ha='center', fontsize=8, color=NAVY)
     fig.tight_layout(pad=1.1)
     chart = io.BytesIO(); agg.print_png(chart); chart.seek(0)
-    story.append(Image(chart, width=width, height=130))
+    story.append(Image(chart, width=width, height=80))
     story.append(table(['Canal', 'Sinal da amostra (ADC)', 'Resposta relativa (%)'],
                        [[f'{wl} nm', _fmt(adc[i],1), _fmt(refs[i])] for i,wl in enumerate(WAVELENGTHS)], [width*.2,width*.4,width*.4]))
-    story += [Spacer(1, 7), p('ADC: contagens do detector. A resposta é relativa ao branco de trabalho, com correção do escuro; não representa refletância absoluta certificada.', small), PageBreak()]
-    story += [p('Rastreabilidade', title), p('Referência instrumental, aquisição e condições do ensaio', body)]
+    story += [PageBreak()]
+    story += [p('Rastreabilidade', title), p('Referência instrumental, aquisição e condições do ensaio', body), p('ADC: contagens do detector. A resposta é relativa ao branco de trabalho, com correção do escuro; não representa refletância absoluta certificada.', small)]
     story.append(section('03  /  Referência utilizada na medição'))
     story.append(cards([('Registro da referência', calibration_label), ('Referência de trabalho', reference.get('reference_label')),
                         ('Calibração realizada em', reference.get('timestamp')), ('Operador da calibração', reference.get('operador')),

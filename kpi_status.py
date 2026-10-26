@@ -20,19 +20,19 @@ TITLES = {
     "energy": "Intensidade global",
     "peak": "Pico espectral",
     "ratio_cel": "Razão de banda · R680 / R730",
-    "ratio_water": "Razão de espessura · R860 / R760",
+    "ratio_water": "Razão de banda · R860 / R760",
 }
 SHORT_TITLES = {
     "energy": "Intensidade",
     "peak": "Pico espectral",
     "ratio_cel": "Razão de banda",
-    "ratio_water": "Razão de espessura",
+    "ratio_water": "Razão R860 / R760",
 }
 EXPLANATION = {
     "energy": "Soma das contagens dos seis canais. Indica se há luz suficiente e se algum canal está perto de saturar.",
     "peak": "Comprimento de onda do canal mais intenso. Um espectro sem contraste costuma indicar amostra ausente ou LED apagado.",
-    "ratio_cel": "R680 / R730 sobre o espectro normalizado pela soma. Representa a banda da celulose.",
-    "ratio_water": "R860 / R760 sobre o espectro normalizado pela soma. Representa a espessura da lâmina de água.",
+    "ratio_cel": "R680 / R730 sobre o espectro normalizado pela soma. Razão espectral; seletividade físico-química não validada.",
+    "ratio_water": "R860 / R760 sobre o espectro normalizado pela soma. Razão espectral; não mede espessura ou concentração de água.",
 }
 
 NONE, OK, ATTENTION, ERROR = "none", "ok", "attention", "error"

@@ -7,6 +7,7 @@ import fake_esp32 as sim
 class FakeESP32Tests(unittest.TestCase):
     def setUp(self):
         self.bancada = sim.Bancada()
+        self.bancada.sensor_avancado = True
         self.rx = []
 
     def command(self, cmd):

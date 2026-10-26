@@ -332,7 +332,7 @@ class SpectralSplineChartWidget(QFrame):
 
         # Spline Overlay
         self.spline_overlay = SplineOverlay(self)
-        self.spline_overlay.raise_()
+        self.spline_overlay.hide()  # Six discrete measured bands; no implied continuous spectrum.
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
@@ -368,7 +368,7 @@ class SpectralSplineChartWidget(QFrame):
 
         # Se vetor calibrado R_i foi fornecido:
         if r_calibrated and len(r_calibrated) >= 6:
-            self._percent_values = [min(100.0, max(0.0, float(v) * 100.0)) for v in r_calibrated[:6]]
+            self._percent_values = [max(0.0, float(v) * 100.0) for v in r_calibrated[:6]]
         else:
             max_c = max(self._raw_adc_values)
             if max_c > 0:
@@ -378,7 +378,7 @@ class SpectralSplineChartWidget(QFrame):
 
         # Se vetor normalizado SNV foi fornecido:
         if r_snv and len(r_snv) >= 6:
-            self._snv_values = [min(100.0, max(0.0, float(v) * 100.0)) for v in r_snv[:6]]
+            self._snv_values = [max(0.0, float(v) * 100.0) for v in r_snv[:6]]
         else:
             sum_c = sum(self._raw_adc_values)
             if sum_c > 0:
@@ -391,7 +391,7 @@ class SpectralSplineChartWidget(QFrame):
     def refresh_display(self):
         if self.unit_mode == "%":
             vals = self._percent_values
-            scale_max = 100.0
+            scale_max = max(100.0, max(vals, default=0.0) * 1.15)
             unit_lbl = "%"
         elif self.unit_mode == "SNV":
             vals = self._snv_values

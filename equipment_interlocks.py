@@ -1,8 +1,7 @@
 """Sequenciamento confirmado da porta e autorização temporária da carcaça."""
 import time
 
-from PyQt5.QtWidgets import QDialog
-from auth_dialogs import DialogLogin
+from PyQt5.QtWidgets import QDialog, QInputDialog
 
 
 class EquipmentInterlocks:
@@ -114,8 +113,6 @@ class EquipmentInterlocks:
                 text, color = "Carcaça: sem confirmação", "#94A3B8"
             elif self.housing_closed:
                 text, color = "Carcaça fechada • chave ativa", "#10B981"
-            elif self.admin_session():
-                text, color = "Carcaça aberta • sessão admin", "#F59E0B"
             elif self.authorized:
                 text, color = "Carcaça aberta • acesso autorizado", "#F59E0B"
             else:
@@ -140,23 +137,15 @@ class EquipmentInterlocks:
 
     def authenticate(self):
         w = self.window
-        if self.admin_session():
-            return True
-        if self.authenticating:
+        user = getattr(w, "authenticated_user", None) or {}
+        # Maintenance is a separate privilege; administration alone cannot open the guard.
+        if user.get("role") != "manutencao":
+            w.log_message("[MANUTENÇÃO] Bypass recusado: exige privilégio específico de manutenção.")
             return False
-        epoch = w._operation_epoch
-        self.authenticating = True
-        try:
-            dlg = DialogLogin(w.auth_manager, w._manual_dialog or w)
-            dlg.setWindowTitle("Carcaça aberta — autorizar esta operação")
-            accepted = dlg.exec_() == QDialog.Accepted
-            user = dlg.usuario_logado if accepted else None
-        finally:
-            self.authenticating = False
-        if not user or epoch != w._operation_epoch or not w.is_serial_connected():
+        reason, accepted = QInputDialog.getText(w, "Bypass temporário de manutenção", "Motivo da operação com carcaça aberta:")
+        if not accepted or not reason.strip():
             return False
-        w.current_operator_name = user.get("username", "Operador")
-        w.log_message("[CARCAÇA] Operação com carcaça aberta autorizada por " + w.current_operator_name)
+        w.log_message(f"[MANUTENÇÃO] Bypass solicitado por {user.get('username')}: {reason.strip()}")
         return True
 
     def confirm_sample(self):
@@ -203,9 +192,6 @@ class EquipmentInterlocks:
         if not self.carriage_capable or self.carriage_retracted is None:
             w._cancel_equipment_request("Atualize o firmware e aguarde os fins de curso do carrinho contínuo.")
             return False
-        if self.admin_session() and self.admin_capable and not self.authorized:
-            return self.wait_for("CMD:ADMIN_CARCACA", "ADMIN_CARCACA_AUTORIZADA",
-                                 lambda: w.send_serial_command(command, manual=manual))
         if not self.housing_closed and not self.authorized:
             # Nenhum movimento é enviado antes do login e do ACK do firmware.
             w._hardware_watchdog.stop()
@@ -288,14 +274,10 @@ class EquipmentInterlocks:
             self.admin_capable = True
             return True
         if status == "ADMIN_CARCACA_AUTORIZADA":
-            if not self.admin_session():
-                self.revoke()
-                w.serial_worker.send_command("CMD:REVOGAR_CARCACA")
-                return True
-            self.authorized = True
-            self.refresh_indicator()
-            if not self.pending or self.pending[0] != status:
-                return True
+            # This client no longer requests the legacy administrative bypass.
+            self.revoke()
+            w.serial_worker.send_command("CMD:REVOGAR_CARCACA")
+            return True
         if status.startswith("CARCACA_AUTORIZACAO_REVOGADA"):
             active = self.authorized and self.busy() and not status.endswith(":CARCACA_FECHADA")
             self.revoke(notify=False)

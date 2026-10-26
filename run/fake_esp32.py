@@ -10,6 +10,7 @@ Não movimenta nada e não mede luz real. Serve para testar telas, mensagens,
 intertravamentos e fluxos de ensaio sem a bancada.
 """
 import argparse
+import json
 import re
 import random
 import socket
@@ -22,8 +23,13 @@ ATRASO_LEITURA = 0.4      # tempo simulado de integração do sensor
 
 
 class Bancada:
-    def __init__(self):
+    def __init__(self, seed=0, scenario="normal"):
         self.lock = threading.Lock()
+        self.random = random.Random(seed)
+        self.scenario = scenario
+        self.abort = threading.Event()
+        self.fault = False
+        self.busy = False
         self.porta_aberta = False
         self.gaveta_aberta = False
         self.sensor_avancado = False
@@ -39,7 +45,7 @@ class Bancada:
     def amostra(self, escuro):
         # Canais 610, 680, 730, 760, 810 e 860 nm, com ruído leve.
         base = [60, 62, 65, 63, 61, 60] if escuro else [2400, 2900, 3300, 3100, 2600, 2100]
-        return [max(0, round(v + random.gauss(0, 12 if escuro else 60))) for v in base]
+        return [max(0, round(v + self.random.gauss(0, 12 if escuro else 60))) for v in base]
 
 
 def responder(bancada, comando, enviar):
@@ -52,8 +58,18 @@ def responder(bancada, comando, enviar):
         for status in ("PROTOCOLO_2", "PORTA_PROTOCOLO_1", "MANUAL_PROTOCOLO_1",
                        "CARRINHO_PROTOCOLO_1", "ADMIN_PROTOCOLO_1", "SENSOR_OK"):
             enviar("STATUS:" + status)
+        enviar('IDENTITY:' + json.dumps({"origin":"SIMULADA","device_id":"spectrum-simulator","firmware":"simulator-1","protocol":2}))
         enviar(bancada.estado_linha())
         enviar("STATUS:PONG")
+        return True
+    if comando == "REARMAR":
+        if bancada.busy or not bancada.carcaca_fechada:
+            enviar("STATUS:COMANDO_ERRO:REARME_BLOQUEADO")
+            return True
+        bancada.fault = False
+        bancada.abort.clear()
+        enviar("STATUS:REARME_CONFIRMADO")
+        enviar(bancada.estado_linha())
         return True
     if comando == "ESTADO_PORTA":
         enviar(bancada.estado_linha())
@@ -72,8 +88,18 @@ def responder(bancada, comando, enviar):
         return True
 
     def movimento(atualizar, status):
-        time.sleep(ATRASO_MOVIMENTO)
+        if bancada.fault or not bancada.carcaca_fechada:
+            enviar("STATUS:COMANDO_ERRO:INTERTRAVAMENTO")
+            return
+        if bancada.scenario in ("fim_travado", "chaves_contraditorias"):
+            bancada.fault = True
+            enviar("STATUS:PORTA_ERRO:" + ("PRAZO_PERCURSO" if bancada.scenario == "fim_travado" else "FINS_CONTRADITORIOS"))
+            return
+        if bancada.abort.wait(ATRASO_MOVIMENTO):
+            return
         with bancada.lock:
+            if bancada.abort.is_set():
+                return
             atualizar()
         # O cliente verifica os fins de curso antes de aceitar o STATUS.
         # No simulador, a telemetria do estado novo precisa vir primeiro;
@@ -105,14 +131,27 @@ def responder(bancada, comando, enviar):
         if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", identificador):
             enviar("STATUS:COMANDO_ERRO:ID_INVALIDO")
             return True
-        time.sleep(ATRASO_LEITURA)
+        if bancada.fault or not bancada.carcaca_fechada or bancada.porta_aberta or bancada.gaveta_aberta or not bancada.sensor_avancado:
+            enviar("STATUS:LEITURA_ERRO:" + identificador + ":POSICAO_INVALIDA")
+            return True
+        if bancada.scenario == "sensor_ausente":
+            enviar("STATUS:LEITURA_ERRO:" + identificador + ":SENSOR_DESCONECTADO")
+            return True
+        if bancada.abort.wait(ATRASO_LEITURA):
+            return True
         valores = bancada.amostra(escuro=(tipo == "LER_ESCURO"))
+        if bancada.scenario == "saturacao":
+            valores = [65535]*6
+        if bancada.abort.is_set():
+            return True
         enviar("SCAN:" + identificador + "|DATA:" + ",".join(str(v) for v in valores))
         enviar("STATUS:LEITURA_CONCLUIDA:" + identificador)
     elif comando in ("LER_ESPECTRO", "LER_ESCURO"):
         # Não emitir pacotes DATA: sem identificador, que o supervisório descarta.
         enviar("STATUS:COMANDO_ERRO:ID_INVALIDO")
     elif comando == "EMERGENCIA":
+        bancada.abort.set()
+        bancada.fault = True
         with bancada.lock:
             bancada.autorizada = False
         enviar("STATUS:EMERGENCIA_ACIONADA")
@@ -131,6 +170,15 @@ def atender(conexao, endereco, bancada):
             conexao.sendall((linha + "\n").encode("utf-8"))
         print(f"[SIM] -> {linha}", flush=True)
 
+    operation = None
+    def operate(command):
+        try:
+            responder(bancada, command, enviar)
+        except OSError:
+            pass
+        finally:
+            bancada.busy = False
+
     buffer = b""
     try:
         while True:
@@ -145,11 +193,24 @@ def atender(conexao, endereco, bancada):
                     continue
                 comando = linha[4:]
                 print(f"[SIM] <- {linha}", flush=True)
+                base = comando.removeprefix("MANUAL:")
+                if base.startswith(("ABRIR_", "FECHAR_", "AVANCAR_", "RECUAR_", "LER_")):
+                    if bancada.busy:
+                        enviar("STATUS:COMANDO_ERRO:OCUPADO")
+                    else:
+                        bancada.busy = True
+                        operation = threading.Thread(target=operate, args=(comando,), daemon=True)
+                        operation.start()
+                    continue
                 if not responder(bancada, comando, enviar):
                     print(f"[SIM] comando sem resposta simulada: {comando}", flush=True)
     except OSError:
         pass
     finally:
+        bancada.abort.set()
+        bancada.fault = True
+        if operation is not None:
+            operation.join(timeout=1)
         conexao.close()
         print(f"[SIM] cliente desconectado: {endereco}", flush=True)
 
@@ -158,9 +219,11 @@ def main():
     parser = argparse.ArgumentParser(description="Simulador ESP32 para o SPECTRUM-LAB PRO")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=PORTA_PADRAO)
+    parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--scenario", choices=("normal", "fim_travado", "chaves_contraditorias", "sensor_ausente", "saturacao"), default="normal")
     args = parser.parse_args()
 
-    bancada = Bancada()
+    bancada = Bancada(seed=args.seed, scenario=args.scenario)
     servidor = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     servidor.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     servidor.bind((args.host, args.port))
@@ -168,7 +231,7 @@ def main():
     print(f"[SIM] bancada simulada ouvindo em {args.host}:{args.port}", flush=True)
     while True:
         conexao, endereco = servidor.accept()
-        threading.Thread(target=atender, args=(conexao, endereco, bancada), daemon=True).start()
+        atender(conexao, endereco, bancada)
 
 
 if __name__ == "__main__":

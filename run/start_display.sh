@@ -71,7 +71,7 @@ fi
 setsid nohup fluxbox >"$LOG_DIR/fluxbox.log" 2>&1 &
 if ! wait_port 5900 15; then c_err "Servidor VNC indisponível"; exit 1; fi
 c_ok "Display virtual e VNC prontos (porta 5900 local)"
-setsid nohup websockify --web "$NOVNC" 6080 127.0.0.1:5900 >"$LOG_DIR/websockify.log" 2>&1 &
+setsid nohup websockify --web "$NOVNC" "${NOVNC_BIND:-127.0.0.1}:6080" 127.0.0.1:5900 >"$LOG_DIR/websockify.log" 2>&1 &
 if ! wait_port 6080 15; then c_err "O noVNC não abriu a porta 6080."; tail_log "$LOG_DIR/websockify.log"; exit 1; fi
 c_ok "noVNC na porta 6080"
 

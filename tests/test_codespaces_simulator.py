@@ -6,6 +6,7 @@ from run.fake_esp32 import Bancada, responder
 class CodespacesSimulatorTests(unittest.TestCase):
     def setUp(self):
         self.bancada = Bancada()
+        self.bancada.sensor_avancado = True
         self.messages = []
         self.send = self.messages.append
 

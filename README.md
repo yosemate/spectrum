@@ -187,3 +187,7 @@ Os documentos de versões anteriores descrevem o comportamento daquela versão. 
 ---
 
 Projeto acadêmico do curso técnico em Automação Industrial.
+
+## Revisão de engenharia de 26/10/2026
+
+Correções incrementais, evidências, compatibilidade e pendências: [relatório da revisão](docs/audit/2026-10-26/README.md). Esta revisão não constitui liberação industrial nem validação analítica de Kappa.
